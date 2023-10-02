@@ -17,7 +17,6 @@
     -> goto와 현재 상태를 저장하는 변수(prog.jmp_case)를 통해 프로그램 카운터를 간접 표현한다.
 */
 
-
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
