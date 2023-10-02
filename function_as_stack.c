@@ -14,7 +14,7 @@
 
     3. program counter
     -> c언어에서 프로그램 카운터를 사용할 수 없다.
-    -> goto와 현재 상태를 저장하는 변수를 통해 프로그램 카운터를 간접 표현한다.
+    -> goto와 현재 상태를 저장하는 변수(prog.jmp_case)를 통해 프로그램 카운터를 간접 표현한다.
 */
 
 
@@ -37,14 +37,16 @@ int prec(char op);
 
 int main(void)
 {
-    char* s = "(3+7)*(4+6)+9*8"; //(3+7)*(4+6)+9*8 // 37+46+*98*+
+    char* s = "3-(2*(7*81)-2/3)"; //(3+7)*(4+6)+9*8 // 37+46+*98*+ // 3-(2*(7*81)-2/3)
+
+    /* progress as program counter */
+    progress prog; prog.depth = 0; prog.index = 0; prog.end = strlen(s); prog.top = -1; prog.jmp_case = 0; 
+    progress* p = &prog;
+
     printf("before: %s\n", s);
-    int end = strlen(s);
-    progress p; p.depth = 0; p.index = 0; p.end = strlen(s); p.top = -1; p.jmp_case = 0;
-    progress* pp = &p;
-    printf("after: ");
-    function(s, pp);
-    printf("\n");
+
+    printf("after: "); function(s, p); printf("\n");
+
     return 0;
 }
 
@@ -74,53 +76,24 @@ void function(char* s, progress* p)
 {
     char tmp;
     first:
-    if(p->index == p->end)
+    switch (p->jmp_case)
     {
-        switch (p->jmp_case)
-        {
-        case 4:
-            return;
-        default:
-            break;
-        }
-        //while (!is_empty(&s)) printf("%c", pop(&s));
-        while(p->depth != 0)
-        {
-            p->jmp_case = -1;
-            tmp = p->top;
-            printf("%c", tmp);
-            return;
-        }
-        p->jmp_case = 4;
-        goto first;
-        jmp_case_4:
+    case 1:
+        goto jmp_case_1;
+    case 2:
+        goto jmp_case_2;
+    case 4:
         return;
+    default:
+        break;
     }
-    else
+    if(p->index != p->end)
     {
-        // jmp 해야할 경우 먼저 확인
-        switch (p->jmp_case)
-        {
-        case 1:
-            goto jmp_case_1;
-        case 2:
-            goto jmp_case_2;
-        default:
-            break;
-        }
-
-        // jmp가 필요 없는 경우
         char c = s[p->index++];
 
         switch (c)
         {
         case '+': case '-': case '*': case '/':
-            /*
-            while (!is_empty(&s) && (prec(ch) <= prec(peek(&s))))
-                printf("%c", pop(&s));
-            push(&s, ch);
-            break;
-            */
             jmp_case_1:
             while(p->depth != 0 && prec(c) <= prec(p->top))
             {
@@ -130,43 +103,43 @@ void function(char* s, progress* p)
                 return;
             }
             p->jmp_case = -1;
-            stack(s, s[p->index-1], p); // 이 부분이 핵심인데, 2번째 인자 값에 c를 넣으면 과거에 index를 기반으로 했던 c 값이 들어있어 잘못된 결과가 나온다.
+            stack(s, s[p->index-1], p); // 2번째 인자 값에 c를 넣으면 과거에 index를 기반으로 했던 c 값이 들어있어 잘못된 결과가 나온다.
             goto first;
+
         case '(':
-            /*
-            push(&s, ch);
-            break;
-            */
             stack(s, c, p);
             goto first;
+
         case ')':
-            /*
-            top_op = pop(&s);
-            while (top_op != '(') {     // 왼쪽 괄호를 만날 때까지 출력 
-                printf("%c", top_op);
-                top_op = pop(&s);
-            }
-            break;
-            */
             p->jmp_case = 2;
             jmp_case_2:
             while(p->top != '(')
             {
                 tmp = p->top;
                 printf("%c", tmp);
+                p->jmp_case = 2;
                 return;
             }
             p->jmp_case = -1;
             return;
-            goto first;
+
         default:
             printf("%c", c);
             goto first;
-            break;
         }
-        //while (!is_empty(&s)) printf("%c", pop(&s));
+    }
+
+    else
+    {
+        while(p->depth != 0)
+        {
+            p->jmp_case = -1;
+            tmp = p->top;
+            printf("%c", tmp);
+            return;
+        }
+        p->jmp_case = 4;
         goto first;
     }
     goto first;
-    return;
 }
