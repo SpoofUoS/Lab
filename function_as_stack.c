@@ -57,7 +57,6 @@ int prec(char op)
 
 void function(element n, char* s, progress* p)
 {
-    element prev;
     first:
     switch (p->jmp_case)
     {
@@ -82,7 +81,6 @@ void function(element n, char* s, progress* p)
 
     /* function part */
     function:
-
     if(p->index != p->end)
     {
         char c = s[p->index++];
