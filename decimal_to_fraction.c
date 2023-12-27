@@ -1,4 +1,7 @@
 // Created by Spoof_UoS.
+//
+// Show the fraction of the decimal number. (error < 0.01 %)
+// ex) 0.3333333333333333 -> 1/3
 #include <stdio.h>
 #include <math.h>
 
@@ -79,7 +82,7 @@ fraction decimal_to_fraction(double n)
     for(int i=0; i<1000*1000; i++) {
         double error = fabs(arr[i].value - n) / n * 100;
         if (error < 0.01) {
-            printf("\n%lf: %3d / %3d | ", n, arr[i].numerator, arr[i].denominator);
+            printf("\n%lf: %3d / %3d | ", arr[i].value, arr[i].numerator, arr[i].denominator);
             printf("error: %0.3lf %%", error);
         }
     }
