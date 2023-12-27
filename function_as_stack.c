@@ -18,7 +18,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-typedef int element;
+typedef char element;
 
 typedef struct progress{
     int index;
@@ -39,7 +39,7 @@ int main(void)
 
     printf("before: %s\n", s);
 
-    printf("after: "); function(-1, s, p); printf("\n");
+    printf("after: "); function(-1, s2, p); printf("\n");
 
     return 0;
 }
