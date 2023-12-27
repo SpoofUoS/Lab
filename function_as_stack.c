@@ -39,7 +39,7 @@ int main(void)
 
     printf("before: %s\n", s);
 
-    printf("after: "); function(-1, s2, p); printf("\n");
+    printf("after: "); function(-1, s, p); printf("\n");
 
     return 0;
 }
